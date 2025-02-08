@@ -10,10 +10,15 @@ app.use(cors());
 app.use(express.json()); // To parse JSON data
 
 // Connect to MongoDB
-mongoose.connect("mongodb://localhost:27017/chatApp", {
+const Mongo_url="mongodb+srv://harish:harish1234@cluster0.1ixjr.mongodb.net/chatDB?retryWrites=true&w=majority";
+
+mongoose.connect(Mongo_url, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-});
+})
+.then(() => console.log("Connected to MongoDB"))
+.catch((err) => console.error("MongoDB Connection Error:", err));
+
 
 // Define Message Schema
 const messageSchema = new mongoose.Schema({
