@@ -1,4 +1,4 @@
-Chat Application
+#CHAT APPLICATION
 
 A real-time chat application built using React.js, Node.js, and Socket.io. Users can join specific chat rooms and send messages, which are stored in MongoDB.
 
