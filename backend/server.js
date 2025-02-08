@@ -36,7 +36,7 @@ const server = http.createServer(app);
 // Initialize Socket.io
 const io = new Server(server, {
   cors: {
-    origin: "https://chat-application-71v7.vercel.app/",
+    origin: "http://localhost:3000",
     methods: ["GET", "POST"],
   },
 });
