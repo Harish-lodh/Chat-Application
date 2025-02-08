@@ -74,3 +74,6 @@ const PORT = 10000;
 server.listen(PORT, () => {
   console.log(`SERVER RUNNING ON PORT ${PORT}`);
 });
+app.get("/", (req, res) => {
+  res.send("Backend is running successfully!");
+});
