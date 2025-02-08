@@ -10,34 +10,33 @@ app.use(cors());
 app.use(express.json()); // To parse JSON data
 
 // Connect to MongoDB
-const Mongo_url="mongodb+srv://harish:harish1234@cluster0.1ixjr.mongodb.net/chatDB?retryWrites=true&w=majority";
+const Mongo_url = "mongodb+srv://harish:harish1234@cluster0.1ixjr.mongodb.net/chatDB?retryWrites=true&w=majority";
 
 mongoose.connect(Mongo_url, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log("Connected to MongoDB"))
-.catch((err) => console.error("MongoDB Connection Error:", err));
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("MongoDB Connection Error:", err));
 
-
-// Define Message Schema
+// Define Message Schema with timestamps
 const messageSchema = new mongoose.Schema({
-  room: String,
-  author: String,
-  message: String,
-  time: String,
-});
+  room: { type: String, required: true },
+  author: { type: String, required: true },
+  message: { type: String, required: true },
+  time: { type: String, required: true },
+}, { timestamps: true }); // Auto createdAt and updatedAt
 
 // Create Message Model
-const Message = mongoose.model("message", messageSchema,"chat");
-console.log(messageSchema);
+const Message = mongoose.model("Message", messageSchema, "chat");
+
 // Create HTTP Server
 const server = http.createServer(app);
 
 // Initialize Socket.io
 const io = new Server(server, {
   cors: {
-    origin: "https://chat-application-silk-eight.vercel.app/",
+    origin: "https://chat-application-71v7.vercel.app/",
     methods: ["GET", "POST"],
   },
 });
@@ -50,18 +49,32 @@ io.on("connection", (socket) => {
     socket.join(room);
     console.log(`User with ID: ${socket.id} joined room: ${room}`);
 
-    // Fetch previous messages from the database
-    const pastMessages = await Message.find({ room }).limit(50); // Load last 50 messages
-    socket.emit("load_messages", pastMessages);
+    try {
+      // Fetch last 50 messages from the database
+      const pastMessages = await Message.find({ room }).sort({ createdAt: -1 }).limit(50);
+      socket.emit("load_messages", pastMessages);
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+    }
   });
 
   // Store and send messages
   socket.on("send_message", async (data) => {
-    const newMessage = new Message(data);
-    await newMessage.save(); // Save message in the database
+    console.log("Received Message:", data);
 
-    // Send the message to other users in the same room
-    socket.to(data.room).emit("receive_message", data);
+    // Validate Data Before Saving
+    if (!data.room || !data.author || !data.message || !data.time) {
+      console.error("Invalid message data:", data);
+      return;
+    }
+
+    try {
+      const newMessage = new Message(data);
+      await newMessage.save(); // Save message in database
+      socket.to(data.room).emit("receive_message", data);
+    } catch (error) {
+      console.error("Error saving message:", error);
+    }
   });
 
   socket.on("disconnect", () => {
@@ -74,6 +87,8 @@ const PORT = 10000;
 server.listen(PORT, () => {
   console.log(`SERVER RUNNING ON PORT ${PORT}`);
 });
+
+// Test API to check if server is running
 app.get("/", (req, res) => {
   res.send("Backend is running successfully!");
 });
