@@ -70,7 +70,7 @@ io.on("connection", (socket) => {
 });
 
 // Start Server
-const PORT = 8080;
+const PORT = 10000;
 server.listen(PORT, () => {
   console.log(`SERVER RUNNING ON PORT ${PORT}`);
 });
