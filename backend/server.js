@@ -51,7 +51,7 @@ io.on("connection", (socket) => {
 
     try {
       // Fetch last 50 messages from the database
-      const pastMessages = await Message.find({ room }).sort({ createdAt: -1 }).limit(50);
+      const pastMessages = await Message.find({ room }).sort({ createdAt: 1 }).limit(50);
       console.log("Fetched Messages:", pastMessages);  // <-- Add this log
       socket.emit("load_messages", pastMessages);
     } catch (error) {
@@ -71,7 +71,7 @@ io.on("connection", (socket) => {
 
     try {
       const newMessage = new Message(data);
-      await newMessage.save(); // Save message in database //here not inserting data my databse name is Message and coolection name is chat
+      await newMessage.save(); 
       socket.to(data.room).emit("receive_message", data);
     } catch (error) {
       console.error("Error saving message:", error);
