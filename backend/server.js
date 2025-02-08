@@ -36,7 +36,7 @@ const server = http.createServer(app);
 // Initialize Socket.io
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "https://chat-application-djxo.vercel.app/",
     methods: ["GET", "POST"],
   },
 });
