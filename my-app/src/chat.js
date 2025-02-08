@@ -40,6 +40,7 @@ useEffect(() => {
   
   return (
     <div className="chat-window">
+      <h3 className="heading">Realtime chat-Application</h3>
       <div className="chat-header">
         <p>Live Chat</p>
       </div>

@@ -52,6 +52,7 @@ io.on("connection", (socket) => {
     try {
       // Fetch last 50 messages from the database
       const pastMessages = await Message.find({ room }).sort({ createdAt: -1 }).limit(50);
+      console.log("Fetched Messages:", pastMessages);  // <-- Add this log
       socket.emit("load_messages", pastMessages);
     } catch (error) {
       console.error("Error fetching messages:", error);
@@ -70,7 +71,7 @@ io.on("connection", (socket) => {
 
     try {
       const newMessage = new Message(data);
-      await newMessage.save(); // Save message in database
+      await newMessage.save(); // Save message in database //here not inserting data my databse name is Message and coolection name is chat
       socket.to(data.room).emit("receive_message", data);
     } catch (error) {
       console.error("Error saving message:", error);
@@ -83,7 +84,7 @@ io.on("connection", (socket) => {
 });
 
 // Start Server
-const PORT = 10000;
+const PORT = 3001;
 server.listen(PORT, () => {
   console.log(`SERVER RUNNING ON PORT ${PORT}`);
 });
